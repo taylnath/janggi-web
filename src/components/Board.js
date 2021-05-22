@@ -88,7 +88,7 @@ function Board() {
     <div>
       {squares}
      {/* <button onClick={setAllClicked} style={{float:"right", clear:"left"}}>Click all {counter} </button> */}
-     <button onClick={keepClicking} style={{float:"right", clear:"left"}}>keep clicking</button>
+     <button onClick={keepClicking} style={{float:"right", clear:"left"}}>keep click</button>
 </div>
   )
 }
