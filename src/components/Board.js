@@ -47,19 +47,7 @@ function Board() {
       setColors(newSquareColors);
     }
   };
-  let setAllClicked = function () {
-    let shuffleKeys = [...keys];
-    let i = shuffleKeys.length, rand;
-    while (0 !== i){
-      rand = Math.floor(Math.random() * i);
-      i -= 1;
-      [shuffleKeys[i], shuffleKeys[rand]] = [shuffleKeys[rand], shuffleKeys[i]]
-    }
-    console.log(shuffleKeys);
-    shuffleKeys.forEach(key => {
-      changeColor(key)();
-    })
-  };
+
   let keepClicking = function() {
     // let index = Math.floor(Math.random())
     setInterval(() => {
@@ -75,45 +63,13 @@ function Board() {
         console.log(index);
       }
     }, 1000);
-  }
-  // let setAllClicked = function () {
-  //   let newSquareColors = {...squareColors};
-  //   let newCounter = Math.floor(Math.random() * 7);
-  //   keys.forEach(key => {
-  //     if (!squareColors[key].clicked){
-  //       console.log(Math.floor(Math.random() * 47));
-  //       newSquareColors[key].count = Math.floor(Math.random() * 100);
-  //       newSquareColors[key].clicked = true;
-  //       newCounter = Math.floor(Math.random()* 7);
-  //     }
-  //   keys.forEach(key => {
-  //     if (newSquareColors[key].clicked){
-  //       let newIndex = newSquareColors[key].colorIndex + newSquareColors[key].count;
-  //       let newColorIndex = mod(newIndex, colors.length);
-  //       let newColor = colors[newColorIndex];
-  //       newSquareColors[key].backgroundColor = newColor;
-  //       newSquareColors[key].colorIndex = newColorIndex;
-  //       newSquareColors[key].index = newIndex;
-  //     }
-  //   });
-      // keys.forEach(key => {
-      //   if (newSquareColors[key].clicked){
-      //     let newIndex = newSquareColors[key].colorIndex + newSquareColors[key].count + Math.floor(Math.random() * 7);
-      //     let newColorIndex = mod(newIndex, colors.length);
-      //     let newColor = colors[newColorIndex];
-      //     newSquareColors[key].backgroundColor = newColor;
-      //     newSquareColors[key].colorIndex = newColorIndex;
-      //     newSquareColors[key].index = newIndex;
-      //   }
-      // });
-  //   });
-  //   setColors(newSquareColors);
-  //   setCounter(newCounter);
-  // }
+  };
+
   let side = 60;
+  // let side = 30;
   let squares = grid.map(([i, j]) => {
     let key = String(i) + String(j);
-    let text = `${String(squareColors[key].count)} (${squareColors[key].colorIndex} ${squareColors[key].index})`
+    // let text = `${String(squareColors[key].count)} (${squareColors[key].colorIndex} ${squareColors[key].index})`
     return (
       <Square 
         key={key}
@@ -129,16 +85,6 @@ function Board() {
   });
 
   return (
-    //  Object.keys(squareColors).map(key =>
-    //   <Square 
-    //     key={key}
-    //     backgroundColor={squareColors[key].backgroundColor}
-    //     xPos={squareColors[key].xPos*side} 
-    //     yPos={squareColors[key].yPos*side} 
-    //     side={side}
-    //     changeColor={changeColor(key)}
-    //     text={key}
-    //   />
     <div>
       {squares}
      {/* <button onClick={setAllClicked} style={{float:"right", clear:"left"}}>Click all {counter} </button> */}
