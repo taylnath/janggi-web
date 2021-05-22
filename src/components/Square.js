@@ -12,7 +12,8 @@ function Square(props) {
         position: "absolute",
         left: `${props.xPos}px`,
         top: `${props.yPos}px`,
-        padding: "10px"
+        padding: "10px",
+        transition: "background-color 0.5s ease-in-out"
       }}
       onClick={props.changeColor}
     >
