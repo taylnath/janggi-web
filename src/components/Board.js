@@ -8,6 +8,8 @@ function mod(m, n) {
 function Board() {
   let colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"]
   let [counter, setCounter] = useState(1);
+  let [currentlyClicking, setCurrentlyClicking] = useState(false);
+  let [currentInterval, setCurrentInterval] = useState("");
   let initialColors = {};
   let grid = [];
   let keys = [];
@@ -50,7 +52,7 @@ function Board() {
 
   let keepClicking = function() {
     // let index = Math.floor(Math.random())
-    setInterval(() => {
+    let interval = setInterval(() => {
       console.log('bleah');
       let indices = [...Array(keys.length).keys()];
       let newIndices = indices.filter(i => !squareColors[keys[i]].clicked);
@@ -63,7 +65,14 @@ function Board() {
         console.log(index);
       }
     }, 1000);
+    setCurrentlyClicking(true);
+    setCurrentInterval(interval);
   };
+  let stopClicking = function () {
+    clearInterval(currentInterval);
+    setCurrentlyClicking(false);
+    setCurrentInterval("");
+  }
 
   let side = 60;
   // let side = 30;
@@ -88,7 +97,9 @@ function Board() {
     <div>
       {squares}
      {/* <button onClick={setAllClicked} style={{float:"right", clear:"left"}}>Click all {counter} </button> */}
-     <button onClick={keepClicking} style={{float:"right", clear:"left"}}>keep click</button>
+      <button onClick={currentlyClicking ? stopClicking : keepClicking} style={{float:"right", clear:"left"}}>
+      {currentlyClicking ? "stop clicking" : "keep clicking"}
+      </button>
 </div>
   )
 }
