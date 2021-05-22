@@ -10,6 +10,7 @@ function Board() {
   let [counter, setCounter] = useState(1);
   let [currentlyClicking, setCurrentlyClicking] = useState(false);
   let [currentInterval, setCurrentInterval] = useState("");
+  let [clickingFast, setClickingFast] = useState(false);
   let initialColors = {};
   let grid = [];
   let keys = [];
@@ -52,6 +53,8 @@ function Board() {
 
   let keepClicking = function() {
     // let index = Math.floor(Math.random())
+    setClickingFast(false);
+    clearInterval(currentInterval);
     let interval = setInterval(() => {
       console.log('bleah');
       let indices = [...Array(keys.length).keys()];
@@ -74,6 +77,35 @@ function Board() {
     setCurrentInterval("");
   }
 
+  let clickFaster = function () {
+    setClickingFast(true);
+    clearInterval(currentInterval);
+    let interval = setInterval(() => {
+      console.log('bleah');
+      let indices = [...Array(keys.length).keys()];
+      let newIndices = indices.filter(i => !squareColors[keys[i]].clicked);
+      let index = Math.max(0, Math.floor(Math.random() * (newIndices.length - 1)));
+      let thisKey = keys[newIndices[index]] || keys[0];
+      try {
+        changeColor(thisKey)();
+      } catch (e) {
+        console.log('bad index?');
+        console.log(index);
+      }
+    }, 100);
+    setCurrentlyClicking(true);
+    setCurrentInterval(interval);
+  }
+
+  let reset = function () {
+    setCurrentlyClicking(false);
+    setCounter(1);
+    clearInterval(currentInterval);
+    setCurrentInterval("");
+    setClickingFast(false);
+    setColors(initialColors);
+  }
+
   let side = 60;
   // let side = 30;
   let squares = grid.map(([i, j]) => {
@@ -88,6 +120,7 @@ function Board() {
         side={side}
         changeColor={changeColor(key)}
         // text={text}
+        transitionTime={clickingFast ? 0.1 : 0.5}
         text=""
       />
     );
@@ -100,6 +133,12 @@ function Board() {
       <button onClick={currentlyClicking ? stopClicking : keepClicking} style={{float:"right", clear:"left"}}>
       {currentlyClicking ? "stop clicking" : "keep clicking"}
       </button>
+      <button onClick={clickingFast ? keepClicking : clickFaster}
+      style={{float:"right", clear:"both"}}
+      >{clickingFast ? "click slower" : "click faster"}</button>
+      <button onClick={reset}
+      style={{float:"right", clear:"both"}}
+      >reset</button>
 </div>
   )
 }

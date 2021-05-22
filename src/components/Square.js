@@ -1,6 +1,7 @@
 
 function Square(props) {
   let side = props.side;
+  let transitionString = `background-color ${String(props.transitionTime)}s ease-in-out`;
   return (
     <div 
       style={{
@@ -13,7 +14,8 @@ function Square(props) {
         left: `${props.xPos}px`,
         top: `${props.yPos}px`,
         padding: "10px",
-        transition: "background-color 0.5s ease-in-out"
+        transition: transitionString
+        // transition: "background-color 0.5s ease-in-out"
       }}
       onClick={props.changeColor}
     >
