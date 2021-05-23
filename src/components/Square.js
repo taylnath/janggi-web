@@ -1,7 +1,11 @@
 
+// square component
 function Square(props) {
-  let side = props.side;
+  // side length (in pixels)
+  let side = 60;
+  // string for transition
   let transitionString = `background-color ${String(props.transitionTime)}s ease-in-out`;
+
   return (
     <div 
       style={{
@@ -11,15 +15,13 @@ function Square(props) {
         textAlign:"center",
         border: "2px solid black",
         position: "absolute",
-        left: `${props.xPos}px`,
-        top: `${props.yPos}px`,
+        left: `${props.xPos * 60}px`,
+        top: `${props.yPos * 60}px`,
         padding: "10px",
         transition: transitionString
-        // transition: "background-color 0.5s ease-in-out"
       }}
       onClick={props.changeColor}
     >
-      {props.text} 
     </div>
   );
 }
