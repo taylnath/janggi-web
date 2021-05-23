@@ -125,13 +125,24 @@ function Board() {
       />
     );
   });
+  let posString = `calc(50% - 180px)`
+  console.log(typeof(squareColors));
+  console.log(posString);
 
   return (
     <div>
+    <div style={{
+      position: "absolute",
+      top: posString,
+      left: posString,
+      backgroundColor: "red"
+}}>
       {squares}
+</div>
+<div style={{margin: "100px"}}>
      {/* <button onClick={setAllClicked} style={{float:"right", clear:"left"}}>Click all {counter} </button> */}
       <button onClick={currentlyClicking ? stopClicking : keepClicking} style={{float:"right", clear:"left"}}>
-      {currentlyClicking ? "stop clicking" : "keep clicking"}
+      {currentlyClicking ? "stop clicking" : "auto clicking"}
       </button>
       <button onClick={clickingFast ? keepClicking : clickFaster}
       style={{float:"right", clear:"both"}}
@@ -139,6 +150,7 @@ function Board() {
       <button onClick={reset}
       style={{float:"right", clear:"both"}}
       >reset</button>
+    </div>
 </div>
   )
 }
