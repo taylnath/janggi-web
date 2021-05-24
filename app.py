@@ -58,6 +58,6 @@ def make_move():
     return {
         "success": result,
         "curr_player": g.get_player(),
-        "in_check": g.get_in_check(),
+        "in_check": g._in_check,
         "state": g.get_game_state()
         }

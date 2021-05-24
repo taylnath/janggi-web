@@ -18,53 +18,106 @@ function Board() {
 
   const [pieceSelected, setPieceSelected] = useState(false);
   const [piecePlaced, setPiecePlaced] = useState(false);
-  const [currentLoc, setCurrentLoc] = useState('');
+  const [selectedLoc, setSelectedLoc] = useState('');
   const [desiredLoc, setDesiredLoc] = useState('');
+  const [possibleMoves, setPossibleMoves] = useState([]);
   const [player, setPlayer] = useState('B');
 
+  function selectPiece (loc) {
 
-  function handleClick(loc){
-    return function (){
-      // console.log('in handleclick with loc=', loc, typeof(loc));
-      // console.log('board is', board);
-      // console.log('board at loc is', board[loc]);
-      let newBoard = {...board};
-      // console.log('newboard is', newBoard);
-      // console.log('newboard at loc is', newBoard[loc]);
-      if (!pieceSelected){
-        if (newBoard[loc].img){
-          setPieceSelected(true);
-          if (desiredLoc){
-            newBoard[desiredLoc].backgroundColor = '';
+    let newBoard = {...board};
+    // only look at this location if there is a piece there
+    if (newBoard[loc].img){
+      // if we just made a move, clear the old background
+      if (desiredLoc){
+        newBoard[desiredLoc].backgroundColor = '';
+      }
+
+      // reset background for the old possible moves
+      if (possibleMoves !== []){
+        possibleMoves.forEach(moveLoc => {
+          newBoard[moveLoc].backgroundColor = '';
+        });
+      }
+      fetch(`/api/game/get_moves?from=${loc}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log("data in promise:", data);
+          let newMoves = data.moves;
+
+          if (newMoves){
+            setPieceSelected(true);
+            // set background for possible moves
+            newMoves.forEach(moveLoc => {
+              newBoard[moveLoc].backgroundColor = 'green';
+            });
+            setPossibleMoves(newMoves);
+            // set new background to denote selection
+            newBoard[loc].backgroundColor = 'blue';
+            setSelectedLoc(loc);
+
           }
-          newBoard[loc].backgroundColor = 'blue';
-          setCurrentLoc(loc);
+
+          // update the board
+          setBoard(newBoard);
+        });
+    }
+  }
+
+  function placePiece(loc) {
+    if (!selectedLoc){
+      return;
+    }
+    let newBoard = {...board};
+    fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success){
+          return;
         }
-      } else if (!piecePlaced) {
         setPiecePlaced(true);
         newBoard[loc].backgroundColor = 'red';
         let samePiece = true;
-        if (loc !== currentLoc){
+        if (selectedLoc && loc !== selectedLoc){
           samePiece = false;
-          newBoard[loc].img = newBoard[currentLoc].img;
-          newBoard[loc].imgAlt = newBoard[currentLoc].imgAlt;
-          newBoard[currentLoc].img = '';
-          newBoard[currentLoc].imgAlt = '';
+          newBoard[loc].img = newBoard[selectedLoc].img;
+          newBoard[loc].imgAlt = newBoard[selectedLoc].imgAlt;
+          newBoard[selectedLoc].img = '';
+          newBoard[selectedLoc].imgAlt = '';
         }
         setDesiredLoc(loc);
         setTimeout(() => {
           let timedOutBoard = board;
           if (!samePiece){
-            timedOutBoard[currentLoc].backgroundColor = '';
+            timedOutBoard[selectedLoc].backgroundColor = '';
+          }
+
+          // reset background for the old possible moves
+          console.log(possibleMoves);
+          if (possibleMoves !== []){
+            possibleMoves.filter(mov => mov !== loc).forEach(moveLoc => {
+              newBoard[moveLoc].backgroundColor = '';
+            });
           }
           setPieceSelected(false);
           setPiecePlaced(false);
           setBoard(timedOutBoard);
         }, 500);
-      } else {
-      }
-      console.log(loc);
-      setBoard(newBoard);
+        setBoard(newBoard);
+      });
+  }
+
+  function handleClick (loc) {
+    return function (){
+      // if a piece has not already been selected, process the new 
+      // selection
+      console.log("piece selected:", pieceSelected);
+      console.log("piece placed:", piecePlaced);
+      if (!pieceSelected){
+        selectPiece(loc);
+      } else if (!piecePlaced) {
+        placePiece(loc);
+      } 
     }
   }
 
