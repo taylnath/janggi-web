@@ -37,8 +37,11 @@ def get_moves():
     g = session["game"]
     from_loc = request.args.get('from')
     piece = g.get_board().get_piece(from_loc)
-    if piece is not None:
-        return {"moves": piece.get_moves(), "success": True}
+    if piece is not None and piece.get_player() == g.get_player():
+        return {
+            "success": True,
+            "moves": piece.get_moves()
+            }
     return {"success": False}
     
 @app.route("/api/game/make_move")
@@ -52,4 +55,9 @@ def make_move():
     result = g.make_move(from_loc, to_loc)
     g.get_board().print_board()
     eprint("player: ", g.get_player())
-    return {"success": result}
+    return {
+        "success": result,
+        "curr_player": g.get_player(),
+        "in_check": g.get_in_check(),
+        "state": g.get_game_state()
+        }
