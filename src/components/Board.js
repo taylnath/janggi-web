@@ -1,5 +1,19 @@
 import {useState} from 'react';
-import Square from './Square'
+import Square from './Square';
+import Red_Cannon from '../pieces/Red_Cannon.png';
+import Red_Chariot from '../pieces/Red_Chariot.png';
+import Red_Elephant from '../pieces/Red_Elephant.png';
+import Red_Guard from '../pieces/Red_Guard.png';
+import Red_Horse from '../pieces/Red_Horse.png';
+import Red_King from '../pieces/Red_King.png';
+import Red_Soldier from '../pieces/Red_Soldier.png';
+import Green_Cannon from '../pieces/Green_Cannon.png';
+import Green_Chariot from '../pieces/Green_Chariot.png';
+import Green_Elephant from '../pieces/Green_Elephant.png';
+import Green_Guard from '../pieces/Green_Guard.png';
+import Green_Horse from '../pieces/Green_Horse.png';
+import Green_King from '../pieces/Green_King.png';
+import Green_Soldier from '../pieces/Green_Soldier.png';
 
 // modulo function so for example mod(-1, 2) = 1 instead of -1 % 2 = -1.
 function mod(m, n) {
@@ -7,23 +21,26 @@ function mod(m, n) {
 } 
 
 // colors to use
-let colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"]
+const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"]
+const numRows = 10;
+const numCols = 9;
+
 
 // component to combine all the squares together
 function Board() {
   // define state variables
   const [counter, setCounter] = useState(1);                          // counter to set up squares with different intervals
-  const [currentlyClicking, setCurrentlyClicking] = useState(false);  // is the board auto-clicking?
-  const [currentInterval, setCurrentInterval] = useState("");         // stores the interval key if currently clicking
-  const [clickingFast, setClickingFast] = useState(false);            // is the board auto-clicking quickly?
+  const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
 
   // initial color object and grid list 
   // -- grid may not be necessary, I just use it to look up keys
   const initialColors = {};
   const grid = [];
   const keys = [];
-  for (let i = 0; i < 5; i++){
-    for (let j = 0; j < 5; j++){
+  const textKeys = [];
+  for (let i = 0; i < numRows; i++){
+    let textKeyRow = [];
+    for (let j = 0; j < numCols; j++){
       initialColors[String(i) + String(j)] = {
         backgroundColor: "",
         clicked: false,
@@ -33,10 +50,104 @@ function Board() {
       };
       grid.push([i, j]);
       keys.push(String(i) + String(j));
+      textKeyRow.push({text: letters[j] + String(i)});
     }
+    textKeys.push(textKeyRow);
   };
+
+  textKeys[0][0].img = Red_Chariot;
+  textKeys[0][0].imgAlt = "Red_Chariot";
+
+  textKeys[0][1].img = Red_Elephant;
+  textKeys[0][1].imgAlt = "Red_Elephant";
+
+  textKeys[0][2].img = Red_Horse;
+  textKeys[0][2].imgAlt = "Red_Horse";
+
+  textKeys[0][3].img = Red_Guard;
+  textKeys[0][3].imgAlt = "Red_Guard";
+
+  textKeys[0][5].img = Red_Guard;
+  textKeys[0][5].imgAlt = "Red_Guard";
+
+  textKeys[0][6].img = Red_Elephant;
+  textKeys[0][6].imgAlt = "Red_Elephant";
+
+  textKeys[0][7].img = Red_Horse;
+  textKeys[0][7].imgAlt = "Red_Horse";
+
+  textKeys[0][8].img = Red_Chariot;
+  textKeys[0][8].imgAlt = "Red_Chariot";
+
+  textKeys[1][4].img = Red_King;
+  textKeys[1][4].imgAlt = "Red_King";
+
+  textKeys[2][1].img = Red_Cannon;
+  textKeys[2][1].imgAlt = "Red_Cannon";
+
+  textKeys[2][7].img = Red_Cannon;
+  textKeys[2][7].imgAlt = "Red_Cannon";
+
+  textKeys[3][0].img = Red_Soldier;
+  textKeys[3][0].imgAlt = "Red_Soldier";
+  textKeys[3][2].img = Red_Soldier;
+  textKeys[3][2].imgAlt = "Red_Soldier";
+  textKeys[3][4].img = Red_Soldier;
+  textKeys[3][4].imgAlt = "Red_Soldier";
+  textKeys[3][6].img = Red_Soldier;
+  textKeys[3][6].imgAlt = "Red_Soldier";
+  textKeys[3][8].img = Red_Soldier;
+  textKeys[3][8].imgAlt = "Red_Soldier";
+
+  // ------- green pieces
+
+  textKeys[9][0].img = Green_Chariot;
+  textKeys[9][0].imgAlt = "Green_Chariot";
+
+  textKeys[9][1].img = Green_Elephant;
+  textKeys[9][1].imgAlt = "Green_Elephant";
+
+  textKeys[9][2].img = Green_Horse;
+  textKeys[9][2].imgAlt = "Green_Horse";
+
+  textKeys[9][3].img = Green_Guard;
+  textKeys[9][3].imgAlt = "Green_Guard";
+
+  textKeys[9][5].img = Green_Guard;
+  textKeys[9][5].imgAlt = "Green_Guard";
+
+  textKeys[9][6].img = Green_Elephant;
+  textKeys[9][6].imgAlt = "Green_Elephant";
+
+  textKeys[9][7].img = Green_Horse;
+  textKeys[9][7].imgAlt = "Green_Horse";
+
+  textKeys[9][8].img = Green_Chariot;
+  textKeys[9][8].imgAlt = "Green_Chariot";
+
+  textKeys[8][4].img = Green_King;
+  textKeys[8][4].imgAlt = "Green_King";
+
+  textKeys[7][1].img = Green_Cannon;
+  textKeys[7][1].imgAlt = "Green_Cannon";
+
+  textKeys[7][7].img = Green_Cannon;
+  textKeys[7][7].imgAlt = "Green_Cannon";
+
+  textKeys[6][0].img = Green_Soldier;
+  textKeys[6][0].imgAlt = "Green_Soldier";
+  textKeys[6][2].img = Green_Soldier;
+  textKeys[6][2].imgAlt = "Green_Soldier";
+  textKeys[6][4].img = Green_Soldier;
+  textKeys[6][4].imgAlt = "Green_Soldier";
+  textKeys[6][6].img = Green_Soldier;
+  textKeys[6][6].imgAlt = "Green_Soldier";
+  textKeys[6][8].img = Green_Soldier;
+  textKeys[6][8].imgAlt = "Green_Soldier";
+
   // initial color object (all colors blank)
   let [squareColors, setColors] = useState(initialColors);
+  let [textKeyState, setTextKeyState] = useState(textKeys);
 
   // change the color of a square to the next in line color
   function changeColor (key){
@@ -71,124 +182,86 @@ function Board() {
       setColors(newSquareColors);
     }
   };
+  const [pieceSelected, setPieceSelected] = useState(false);
+  const [piecePlaced, setPiecePlaced] = useState(false);
+  const [currentLoc, setCurrentLoc] = useState([0, 0]);
+  const [desiredLoc, setDesiredLoc] = useState([0, 0]);
 
-  // auto clicker -- clicks on random squares every second
-  function keepClicking() {
-    // clear old state variables
-    setClickingFast(false);
-    clearInterval(currentInterval);
-
-    // click every second
-    let interval = setInterval(() => {
-      // choose a random square from the remaining un-clicked squares, or the first square
-      let indices = [...Array(keys.length).keys()];
-      let newIndices = indices.filter(i => !squareColors[keys[i]].clicked);
-      let index = Math.max(0, Math.floor(Math.random() * (newIndices.length - 1)));
-      let thisKey = keys[newIndices[index]] || keys[0];
-      // the index was getting messed up, so it's in a try/catch for debugging. 
-      // not necessary anymore
-      try {
-        changeColor(thisKey)();
-      } catch (e) {
-        console.log('bad index?');
-        console.log(index);
+  function handleClick(i, j){
+    return function (){
+      let newTextKeyState = [...textKeyState];
+      if (!pieceSelected){
+        if (newTextKeyState[i][j].img){
+          setPieceSelected(true);
+          newTextKeyState[desiredLoc[0]][desiredLoc[1]].backgroundColor = "";
+          newTextKeyState[i][j].backgroundColor = "blue";
+          setCurrentLoc([i, j]);
+        }
+      } else if (!piecePlaced) {
+        setPiecePlaced(true);
+        newTextKeyState[i][j].backgroundColor = "red";
+        let samePiece = true;
+        if (i !== currentLoc[0] || j !== currentLoc[1]){
+          samePiece = false;
+          newTextKeyState[i][j].img = newTextKeyState[currentLoc[0]][currentLoc[1]].img;
+          newTextKeyState[i][j].imgAlt = newTextKeyState[currentLoc[0]][currentLoc[1]].imgAlt;
+          newTextKeyState[currentLoc[0]][currentLoc[1]].img = "";
+          newTextKeyState[currentLoc[0]][currentLoc[1]].imgAlt = "";
+        }
+        setDesiredLoc([i, j]);
+        setTimeout(() => {
+          let timedOutTextKeyState = textKeyState;
+          if (!samePiece){
+            timedOutTextKeyState[currentLoc[0]][currentLoc[1]].backgroundColor = "";
+          }
+          // timedOutTextKeyState[i][j].backgroundColor = "";
+          setPieceSelected(false);
+          setPiecePlaced(false);
+          setTextKeyState(timedOutTextKeyState);
+        }, 500);
+      } else {
       }
-    }, 1000);
-    // update state
-    setCurrentlyClicking(true);
-    setCurrentInterval(interval);
-  };
-
-  // stop either auto-clickers
-  function stopClicking () {
-    clearInterval(currentInterval);
-    setCurrentlyClicking(false);
-    setCurrentInterval("");
-  }
-
-  // fast auto-clicker
-  let clickFaster = function () {
-    // clear old state
-    setClickingFast(true);
-    clearInterval(currentInterval);
-
-    // click every 1/10 of a second
-    let interval = setInterval(() => {
-      // choose random square that hasn't been clicked, or the first square
-      let indices = [...Array(keys.length).keys()];
-      let newIndices = indices.filter(i => !squareColors[keys[i]].clicked);
-      let index = Math.max(0, Math.floor(Math.random() * (newIndices.length - 1)));
-      let thisKey = keys[newIndices[index]] || keys[0];
-      // debug try/catch
-      try {
-        changeColor(thisKey)();
-      } catch (e) {
-        console.log('bad index?');
-        console.log(index);
-      }
-    }, 100);
-    // update state
-    setCurrentlyClicking(true);
-    setCurrentInterval(interval);
-  }
-
-  // reset both auto-clickers and board
-  function reset () {
-    setCurrentlyClicking(false);
-    setCounter(1);
-    clearInterval(currentInterval);
-    setCurrentInterval("");
-    setClickingFast(false);
-    setColors(initialColors);
+      console.log(textKeyState[i][j].text);
+      setTextKeyState(newTextKeyState);
+    }
   }
 
   // form square grid 
   // TODO: make this a flex box instead of absolutely positioning squares
   // TODO: use Object.keys(squareColors) instead of grid? 
-  let squares = grid.map(([i, j]) => {
+  let squares = grid.map(([i, j], index) => {
     let key = String(i) + String(j);
     return (
       <Square 
         key={key}
-        backgroundColor={squareColors[key].backgroundColor}
+        // backgroundColor={squareColors[key].backgroundColor}
+        backgroundColor={textKeyState[i][j].backgroundColor}
         xPos={i} 
         yPos={j} 
-        changeColor={changeColor(key)}
-        transitionTime={clickingFast ? 0.1 : 0.5}
+        // changeColor={changeColor(key)}
+        handleClick={handleClick(i, j)}
+        img={textKeyState[i][j].img}
+        alt={textKeyState[i][j].imgAlt}
+        text={textKeyState[i][j].text}
       />
     );
   });
+
+  let gridCols = `repeat(${numCols}, 1fr)`;
+  let posString = `calc(50% - 200px)`
 
   return (
     <div> {/* wrapper div since JSX wants one element only */}
       {/* div just for squares */}
       <div style={{
         position: "absolute",
-        top: "calc(50% - 180px)",
-        left: "calc(50% - 180px)"
+        top: posString,
+        left: posString,
+        display: "grid",
+        gridTemplateColumns: gridCols,
+        // gap: "0.5px",
       }}>
         {squares}
-      </div>
-      {/* button div */}
-      <div style={{margin: "100px"}}>
-        <button 
-          onClick={currentlyClicking ? stopClicking : keepClicking} 
-          style={{float:"right", clear:"left"}}
-        >
-          {currentlyClicking ? "stop clicking" : "auto click"}
-        </button>
-        <button 
-          onClick={clickingFast ? keepClicking : clickFaster}
-          style={{float:"right", clear:"both"}}
-        >
-          {clickingFast ? "click slower" : "click faster"}
-        </button>
-        <button 
-          onClick={reset}
-          style={{float:"right", clear:"both"}}
-        >
-          reset
-        </button>
       </div>
     </div>
   )
