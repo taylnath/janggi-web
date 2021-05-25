@@ -17,7 +17,7 @@ function Board() {
   const [board, setBoard] = useState(boardSetup);
 
   const [pieceSelected, setPieceSelected] = useState(false);
-  const [piecePlaced, setPiecePlaced] = useState(false);
+  // const [piecePlaced, setPiecePlaced] = useState(false);
   const [selectedLoc, setSelectedLoc] = useState('');
   const [desiredLoc, setDesiredLoc] = useState('');
   const [possibleMoves, setPossibleMoves] = useState([]);
@@ -44,7 +44,7 @@ function Board() {
       setMessage('no piece here');
       setPossibleMoves([]);
       setPieceSelected(false);
-      setPiecePlaced(false);
+      // setPiecePlaced(false);
       return;
     }
 
@@ -68,6 +68,7 @@ function Board() {
     setProcessing(false);
     // console.log("data from promise:", data); // debug
     let newMoves = data.moves;
+    setMessage('found moves ' + String(newMoves));
 
     if (newMoves && newMoves.length){
       console.log('moves found...highlighting...', newMoves);
@@ -131,6 +132,8 @@ function Board() {
     let res = await fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
     let data = await res.json();
     setProcessing(false);
+
+    setMessage('move is allowed? ' + data.success);
     if (!data.success){
       return;
     }
@@ -138,7 +141,7 @@ function Board() {
     // update game status
     setGameState(data.state)
     // place the piece
-    setPiecePlaced(true);
+    // setPiecePlaced(true);
     setPlayer((player === 'B') ? 'R' : 'B');
     newBoard[loc] = {...newBoard[loc], backgroundColor: 'red'};
     // newBoard[loc].backgroundColor = 'red';
@@ -182,7 +185,7 @@ function Board() {
         });
       }
       setPieceSelected(false);
-      setPiecePlaced(false); // take out?
+      // setPiecePlaced(false); // take out?
       setBoard(timedOutBoard);
     }, 500);
     setBoard(newBoard);
@@ -200,9 +203,12 @@ function Board() {
       // console.log("piece placed:", piecePlaced); // debug
       if (!pieceSelected){
         selectPiece(loc);
-      } else if (!piecePlaced) { // take out? (just else instead?)
+      } else {
         placePiece(loc);
-      } 
+      }
+      // } else if (!piecePlaced) { // take out? (just else instead?)
+      //   placePiece(loc);
+      // } 
     }
   }
 
@@ -240,7 +246,7 @@ function Board() {
     setBoard(boardSetup);
     console.log(boardSetup);
     setPieceSelected(false);
-    setPiecePlaced(false);
+    // setPiecePlaced(false);
     setPlayer('B');
     setSelectedLoc('');
     setDesiredLoc('');
