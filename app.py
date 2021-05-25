@@ -1,5 +1,5 @@
 from flask import Flask, session, redirect, request
-from flask_session import Session
+# from flask_session import Session
 from tempfile import mkdtemp
 from JanggiGame import JanggiGame as game
 import time
@@ -8,11 +8,11 @@ import os
 
 app = Flask(__name__, static_folder="./client/build", static_url_path="/")
 
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+# # Configure session to use filesystem (instead of signed cookies)
+# app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
+# Session(app)
 
 def eprint(*msg):
     print(*msg, file=sys.stderr)
@@ -24,6 +24,7 @@ def hello_world():
 @app.route("/api/game/new")
 def new_game():
     session["game"] = game()
+    eprint("made new game by request")
     return {"success": True}
 
 @app.route("/api/game/print")
@@ -36,6 +37,7 @@ def print_board():
 def get_moves():
     if "game" not in session:
         session["game"] = game()
+        eprint("made new game -- not found during get_moves")
     g = session["game"]
     from_loc = request.args.get('from')
     eprint("received get move request for", from_loc)
@@ -60,6 +62,7 @@ def get_moves():
 def make_move():
     if "game" not in session:
         session["game"] = game()
+        eprint("made new game -- not found in make_move")
     g = session["game"]
     # eprint(g.get_board()._board)
     from_loc = request.args.get('from')
