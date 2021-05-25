@@ -23,6 +23,7 @@ def hello_world():
 @app.route("/api/game/new")
 def new_game():
     session["game"] = game()
+    return {"success": True}
 
 @app.route("/api/game/print")
 def print_board():
@@ -36,7 +37,10 @@ def get_moves():
         session["game"] = game()
     g = session["game"]
     from_loc = request.args.get('from')
+    eprint("received get move request for", from_loc)
+    eprint("current player", g.get_player())
     piece = g.get_board().get_piece(from_loc)
+    eprint("piece's player", piece.get_player() if piece is not None else None)
     if piece is not None and piece.get_player() == g.get_player():
         return {
             "success": True,
@@ -53,8 +57,8 @@ def make_move():
     from_loc = request.args.get('from')
     to_loc = request.args.get('to')
     result = g.make_move(from_loc, to_loc)
-    g.get_board().print_board()
-    eprint("player: ", g.get_player())
+    # g.get_board().print_board()
+    # eprint("player: ", g.get_player())
     return {
         "success": result,
         "curr_player": g.get_player(),

@@ -23,99 +23,139 @@ function Board() {
   const [possibleMoves, setPossibleMoves] = useState([]);
   const [player, setPlayer] = useState('B');
 
-  function selectPiece (loc) {
-
+  async function selectPiece (loc) {
     let newBoard = {...board};
-    // only look at this location if there is a piece there
-    if (newBoard[loc].img){
-      // if we just made a move, clear the old background
-      if (desiredLoc){
-        newBoard[desiredLoc].backgroundColor = '';
-      }
+    console.log('in select piece');
 
-      // reset background for the old possible moves
-      if (possibleMoves !== []){
-        possibleMoves.forEach(moveLoc => {
-          newBoard[moveLoc].backgroundColor = '';
-        });
-      }
-      fetch(`/api/game/get_moves?from=${loc}`)
-        .then(res => res.json())
-        .then(data => {
-          console.log("data in promise:", data);
-          let newMoves = data.moves;
-
-          if (newMoves){
-            setPieceSelected(true);
-            // set background for possible moves
-            newMoves.forEach(moveLoc => {
-              newBoard[moveLoc].backgroundColor = 'green';
-            });
-            setPossibleMoves(newMoves);
-            // set new background to denote selection
-            newBoard[loc].backgroundColor = 'blue';
-            setSelectedLoc(loc);
-
-          }
-
-          // update the board
-          setBoard(newBoard);
-        });
+    // reset background for the old possible moves
+    if (possibleMoves !== []){
+      possibleMoves.forEach(moveLoc => {
+        newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
+        // newBoard[moveLoc].backgroundColor = '';
+      });
     }
+
+    // only look at this location if there is a piece there
+    if (!newBoard[loc].img){
+      console.log('no piece here');
+      setPossibleMoves([]);
+      setPieceSelected(false);
+      setPiecePlaced(false);
+      return;
+    }
+
+    // if we just made a move, clear the old background
+    if (desiredLoc){
+      newBoard[desiredLoc] = {...newBoard[desiredLoc], backgroundColor: ''};
+      // newBoard[desiredLoc].backgroundColor = '';
+    }
+
+    let res = await fetch(`/api/game/get_moves?from=${loc}`).catch(err => console.err(err));
+    let data = await res.json();
+    // console.log("data from promise:", data); // debug
+    let newMoves = data.moves;
+
+    if (newMoves && newMoves.length){
+      console.log('moves found...highlighting...', newMoves);
+      console.log(newMoves.length);
+      setPieceSelected(true);
+      // set background for possible moves
+      newMoves.forEach(moveLoc => {
+        newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
+        // newBoard[moveLoc].backgroundColor = 'green';
+      });
+      setPossibleMoves(newMoves);
+      // set new background to denote selection
+      newBoard[loc] = {...newBoard[loc], backgroundColor: 'blue'};
+      // newBoard[loc].backgroundColor = 'blue';
+      setSelectedLoc(loc);
+    } else {
+      console.log('no moves to make');
+    }
+
+    // update the board
+    setBoard(newBoard);
   }
 
-  function placePiece(loc) {
+  async function placePiece(loc) {
+    let newBoard = {...board};
+
+    // make sure we have an initial selected piece
     if (!selectedLoc){
       return;
     }
-    let newBoard = {...board};
-    fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success){
-          return;
-        }
-        setPiecePlaced(true);
-        newBoard[loc].backgroundColor = 'red';
-        let samePiece = true;
-        if (selectedLoc && loc !== selectedLoc){
-          samePiece = false;
-          newBoard[loc].img = newBoard[selectedLoc].img;
-          newBoard[loc].imgAlt = newBoard[selectedLoc].imgAlt;
-          newBoard[selectedLoc].img = '';
-          newBoard[selectedLoc].imgAlt = '';
-        }
-        setDesiredLoc(loc);
-        setTimeout(() => {
-          let timedOutBoard = board;
-          if (!samePiece){
-            timedOutBoard[selectedLoc].backgroundColor = '';
-          }
 
-          // reset background for the old possible moves
-          console.log(possibleMoves);
-          if (possibleMoves !== []){
-            possibleMoves.filter(mov => mov !== loc).forEach(moveLoc => {
-              newBoard[moveLoc].backgroundColor = '';
-            });
-          }
-          setPieceSelected(false);
-          setPiecePlaced(false);
-          setBoard(timedOutBoard);
-        }, 500);
-        setBoard(newBoard);
+    // reset background for the old possible moves
+    if (possibleMoves !== []){
+      possibleMoves.forEach(moveLoc => {
+        newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
+        // newBoard[moveLoc].backgroundColor = '';
       });
+    }
+
+    let res = await fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
+    let data = await res.json();
+    if (!data.success){
+      return;
+    }
+
+    // place the piece
+    setPiecePlaced(true);
+    newBoard[loc] = {...newBoard[loc], backgroundColor: 'red'};
+    // newBoard[loc].backgroundColor = 'red';
+
+    let samePiece = true;
+
+    // update the image if the new location is different
+    if (selectedLoc && loc !== selectedLoc){
+      samePiece = false;
+      newBoard[loc] = {
+        ...newBoard[loc],
+        img: newBoard[selectedLoc].img,
+        imgAlt: newBoard[selectedLoc].imgAlt
+      };
+      newBoard[selectedLoc] = {
+        ...newBoard[selectedLoc],
+        img: '',
+        imgAlt: ''
+      };
+      // newBoard[loc].img = newBoard[selectedLoc].img;
+      // newBoard[loc].imgAlt = newBoard[selectedLoc].imgAlt;
+      // newBoard[selectedLoc].img = '';
+      // newBoard[selectedLoc].imgAlt = '';
+    };
+    setDesiredLoc(loc); // take out?
+    setTimeout(() => {
+      let timedOutBoard = newBoard;
+      if (!samePiece){
+        timedOutBoard[selectedLoc] = {...timedOutBoard[selectedLoc], backgroundColor: ''};
+        // timedOutBoard[selectedLoc].backgroundColor = '';
+      }
+
+      // reset background for the old possible moves
+      // console.log(possibleMoves); // debug
+      if (possibleMoves !== []){
+        possibleMoves.filter(mov => mov !== loc).forEach(moveLoc => {
+          newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
+          // newBoard[moveLoc].backgroundColor = '';
+        });
+      }
+      setPieceSelected(false);
+      setPiecePlaced(false); // take out?
+      setBoard(timedOutBoard);
+    }, 500);
+    setBoard(newBoard);
   }
 
   function handleClick (loc) {
     return function (){
       // if a piece has not already been selected, process the new 
       // selection
-      console.log("piece selected:", pieceSelected);
-      console.log("piece placed:", piecePlaced);
+      // console.log("piece selected:", pieceSelected); // debug
+      // console.log("piece placed:", piecePlaced); // debug
       if (!pieceSelected){
         selectPiece(loc);
-      } else if (!piecePlaced) {
+      } else if (!piecePlaced) { // take out? (just else instead?)
         placePiece(loc);
       } 
     }
@@ -145,7 +185,19 @@ function Board() {
   });
 
   let gridCols = `repeat(${numCols}, 1fr)`;
-  let posString = `calc(50% - 200px)`
+  let posString = `calc(50% - 200px)`;
+
+  async function newGame (){
+    await fetch('/api/game/new').catch(err => console.error(err));
+    console.log('in newgame');
+    setBoard(boardSetup);
+    console.log(boardSetup);
+    setPieceSelected(false);
+    setPiecePlaced(false);
+    setSelectedLoc('');
+    setDesiredLoc('');
+    setPossibleMoves([]);
+  }
 
   return (
     <div> {/* wrapper div since JSX wants one element only */}
@@ -160,6 +212,7 @@ function Board() {
       }}>
         {squares}
       </div>
+      <button style={{position: 'absolute', top: 0}} onClick={newGame}>new game</button>
     </div>
   )
 }
