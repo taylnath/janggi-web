@@ -22,6 +22,8 @@ function Board() {
   const [desiredLoc, setDesiredLoc] = useState('');
   const [possibleMoves, setPossibleMoves] = useState([]);
   const [player, setPlayer] = useState('B');
+  const [processing, setProcessing] = useState(false);
+  const [gameState, setGameState] = useState('UNFINISHED');
 
   async function selectPiece (loc) {
     let newBoard = {...board};
@@ -38,9 +40,16 @@ function Board() {
     // only look at this location if there is a piece there
     if (!newBoard[loc].img){
       console.log('no piece here');
+      alert('no piece here');
       setPossibleMoves([]);
       setPieceSelected(false);
       setPiecePlaced(false);
+      return;
+    }
+
+    if (newBoard[loc].player !== player){
+      console.log('wrong player');
+      alert('wrong player: current player ' + player);
       return;
     }
 
@@ -50,8 +59,10 @@ function Board() {
       // newBoard[desiredLoc].backgroundColor = '';
     }
 
+    setProcessing(true);
     let res = await fetch(`/api/game/get_moves?from=${loc}`).catch(err => console.err(err));
     let data = await res.json();
+    setProcessing(false);
     // console.log("data from promise:", data); // debug
     let newMoves = data.moves;
 
@@ -64,6 +75,8 @@ function Board() {
         newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
         // newBoard[moveLoc].backgroundColor = 'green';
       });
+      // add current location to possible moves
+      newMoves = [...newMoves, loc]
       setPossibleMoves(newMoves);
       // set new background to denote selection
       newBoard[loc] = {...newBoard[loc], backgroundColor: 'blue'};
@@ -80,27 +93,48 @@ function Board() {
   async function placePiece(loc) {
     let newBoard = {...board};
 
+    console.log('in place piece. Possible moves:', possibleMoves);
+
     // make sure we have an initial selected piece
     if (!selectedLoc){
       return;
     }
 
-    // reset background for the old possible moves
-    if (possibleMoves !== []){
-      possibleMoves.forEach(moveLoc => {
-        newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
-        // newBoard[moveLoc].backgroundColor = '';
-      });
+    if (!possibleMoves || !possibleMoves.length){
+      alert('no moves available');
+    };
+
+    if (!(possibleMoves.includes(loc))){
+      console.log(possibleMoves.includes(loc));
+      console.log(typeof(loc));
+      alert('not a valid move:' + selectedLoc + ' to ' + loc + ' | possible: ' + String(possibleMoves));
+      return;
     }
 
+    if (selectedLoc === loc && !window.confirm('Do you want to skip your turn?')){
+      return;
+    }
+
+    // reset background for the old possible moves
+    console.log('resetting possible moves');
+    possibleMoves.forEach(moveLoc => {
+      newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
+      // newBoard[moveLoc].backgroundColor = '';
+    });
+
+    setProcessing(true);
     let res = await fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
     let data = await res.json();
+    setProcessing(false);
     if (!data.success){
       return;
     }
 
+    // update game status
+    setGameState(data.state)
     // place the piece
     setPiecePlaced(true);
+    setPlayer((player === 'B') ? 'R' : 'B');
     newBoard[loc] = {...newBoard[loc], backgroundColor: 'red'};
     // newBoard[loc].backgroundColor = 'red';
 
@@ -112,12 +146,14 @@ function Board() {
       newBoard[loc] = {
         ...newBoard[loc],
         img: newBoard[selectedLoc].img,
-        imgAlt: newBoard[selectedLoc].imgAlt
+        imgAlt: newBoard[selectedLoc].imgAlt,
+        player: newBoard[selectedLoc].player
       };
       newBoard[selectedLoc] = {
         ...newBoard[selectedLoc],
         img: '',
-        imgAlt: ''
+        imgAlt: '',
+        player: ''
       };
       // newBoard[loc].img = newBoard[selectedLoc].img;
       // newBoard[loc].imgAlt = newBoard[selectedLoc].imgAlt;
@@ -149,6 +185,10 @@ function Board() {
 
   function handleClick (loc) {
     return function (){
+      if (processing){
+        alert('system processing!');
+        return;
+      }
       // if a piece has not already been selected, process the new 
       // selection
       // console.log("piece selected:", pieceSelected); // debug
@@ -188,12 +228,15 @@ function Board() {
   let posString = `calc(50% - 200px)`;
 
   async function newGame (){
+    setProcessing(true);
     await fetch('/api/game/new').catch(err => console.error(err));
+    setProcessing(false);
     console.log('in newgame');
     setBoard(boardSetup);
     console.log(boardSetup);
     setPieceSelected(false);
     setPiecePlaced(false);
+    setPlayer('B');
     setSelectedLoc('');
     setDesiredLoc('');
     setPossibleMoves([]);
@@ -212,7 +255,12 @@ function Board() {
       }}>
         {squares}
       </div>
-      <button style={{position: 'absolute', top: 0}} onClick={newGame}>new game</button>
+      <div style={{position: 'absolute', top: 0, right: 0, padding: '20px', margin: '20px', border: '2px solid gray', borderRadius: '5px'}}>
+      <button onClick={newGame}>new game</button>
+      <div>System: {(processing) ? 'processing' : 'ready'}</div>
+      <div>Player: {player}</div>
+      <div>Game: {gameState}</div>
+      </div>
     </div>
   )
 }
