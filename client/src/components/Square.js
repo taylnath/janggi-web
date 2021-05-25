@@ -13,22 +13,19 @@ function Square(props) {
         backgroundColor: props.backgroundColor || 'white',
         width: `${side - 22}px`,
         height: `${side - 22}px`,
-        // textAlign:"center",
         display: "flex",
-        // justifyContent: "center",
         alignItems: "center",
         border: "1px solid black",
-        // position: "absolute",
-        // left: `${props.xPos * 60}px`,
-        // top: `${props.yPos * 60}px`,
         padding: "10px",
         margin: "0px",
         transition: transitionString
       }}
       onClick={props.handleClick}
     >
+      <div class="statusBackground">
       {/* {props.text} */}
       <img src={props.img} alt={props.alt} width="40px" style={{position: "absolute", left: "-2px", filter: "drop-shadow(2px 2px 2px black) drop-shadow(-1px -1px 0 black)"}}/>
+    </div>
     </div>
   );
 }
