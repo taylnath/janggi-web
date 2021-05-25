@@ -68,7 +68,7 @@ function Board() {
     setProcessing(false);
     // console.log("data from promise:", data); // debug
     let newMoves = data.moves;
-    setMessage('found moves ' + String(newMoves));
+    setMessage('found moves ' + String(data));
 
     if (newMoves && newMoves.length){
       console.log('moves found...highlighting...', newMoves);

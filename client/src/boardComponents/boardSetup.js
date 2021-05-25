@@ -96,7 +96,7 @@ boardSetup.g4.player = "R";
 
 boardSetup.i4.img = Red_Soldier;
 boardSetup.i4.imgAlt = "Red_Soldier";
-boardSetup.g4.player = "R";
+boardSetup.i4.player = "R";
 
 // ------- green pieces
 

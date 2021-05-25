@@ -47,7 +47,14 @@ def get_moves():
             "success": True,
             "moves": piece.get_moves()
             }
-    return {"success": False}
+    if piece is None:
+        msg = "no piece here"
+    elif piece.get_player() != g.get_player():
+        msg = "piece player is " + piece.get_player() + " but game player is " + g.get_player()
+    return {
+        "success": False,
+        "msg": msg
+        }
     
 @app.route("/api/game/make_move")
 def make_move():
