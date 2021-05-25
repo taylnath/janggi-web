@@ -1,5 +1,5 @@
 import Board from './components/Board';
-import Clock from './components/Clock';
+// import Clock from './components/Clock';
 
 function App() {
   return (

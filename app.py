@@ -4,8 +4,9 @@ from tempfile import mkdtemp
 from JanggiGame import JanggiGame as game
 import time
 import sys
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./client/build", static_url_path="/")
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
@@ -65,3 +66,17 @@ def make_move():
         "in_check": g._in_check,
         "state": g.get_game_state()
         }
+
+if ("FLASK_ENV" not in os.environ) or os.environ["FLASK_ENV"] == "production":
+    @app.route('/')
+    def index():
+        return app.send_static_file('./client/build/index.html')
+
+    # eprint("production mode")
+    @app.errorhandler(404)
+    def not_found(e):
+        return app.send_static_file('./client/build/index.html')
+    # set static folder
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
