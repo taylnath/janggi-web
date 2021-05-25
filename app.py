@@ -67,9 +67,18 @@ def make_move():
         "state": g.get_game_state()
         }
 
+@app.route('/')
+def index():
+    return app.send_static_file('./client/build/index.html')
+
+@app.errorhandler(404)
+def not_found(e):
+    return {"message": "whoops"}
+    # return app.send_static_file('./client/build/index.html')
+
 if ("FLASK_ENV" not in os.environ) or os.environ["FLASK_ENV"] == "production":
     @app.route('/')
-    def index():
+    def index2():
         return app.send_static_file('./client/build/index.html')
 
     # eprint("production mode")
