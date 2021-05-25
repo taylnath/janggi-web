@@ -83,7 +83,7 @@ def index():
 
 @app.errorhandler(404)
 def not_found(e):
-    return {"message": "whoops"}
+    return {"message": "page not found"}
     # return app.send_static_file('./client/build/index.html')
 
 # if ("FLASK_ENV" not in os.environ) or os.environ["FLASK_ENV"] == "production":

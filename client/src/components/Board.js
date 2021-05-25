@@ -25,6 +25,7 @@ function Board() {
   const [processing, setProcessing] = useState(false);
   const [gameState, setGameState] = useState('UNFINISHED');
   const [message, setMessage] = useState('');
+  const [inCheck, setInCheck] = useState({'R': 'No', 'B': 'No'});
 
   async function selectPiece (loc) {
     let newBoard = {...board};
@@ -68,7 +69,7 @@ function Board() {
     setProcessing(false);
     // console.log("data from promise:", data); // debug
     let newMoves = data.moves;
-    setMessage('found moves ' + JSON.stringify(data));
+    setMessage('found moves');
 
     if (newMoves && newMoves.length){
       console.log('moves found...highlighting...', newMoves);
@@ -115,16 +116,23 @@ function Board() {
       return;
     }
 
-    if (selectedLoc === loc && !window.confirm('Do you want to skip your turn?')){
-      return;
-    }
-
     // reset background for the old possible moves
     console.log('resetting possible moves');
     possibleMoves.forEach(moveLoc => {
       newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
       // newBoard[moveLoc].backgroundColor = '';
     });
+
+    // cancel move if same piece selected
+    if (selectedLoc === loc){
+      newBoard[loc] = {...newBoard[loc], backgroundColor: ''};
+      setBoard(newBoard);
+      setPieceSelected(false);
+      setSelectedLoc('');
+      setDesiredLoc('');
+      setPossibleMoves([]);
+      return;
+    }
 
     setMessage('ok');
 
@@ -139,7 +147,11 @@ function Board() {
     }
 
     // update game status
-    setGameState(data.state)
+    setGameState(data.state);
+
+    // update in check
+    setInCheck(data.in_check);
+
     // place the piece
     // setPiecePlaced(true);
     setPlayer((player === 'B') ? 'R' : 'B');
@@ -252,6 +264,7 @@ function Board() {
     setDesiredLoc('');
     setPossibleMoves([]);
     setMessage('new game');
+    setInCheck({'R': 'No', 'B': 'No'});
   }
 
   return (
@@ -267,12 +280,15 @@ function Board() {
       }}>
         {squares}
       </div>
-      <div style={{position: 'absolute', top: 0, right: 0, padding: '20px', margin: '20px', border: '2px solid gray', borderRadius: '5px'}}>
+      {/* <div style={{zIndex: "-10", position: 'absolute', top: 0, right: 0, padding: '20px', margin: '20px', border: '2px solid gray', borderRadius: '5px'}}> */}
+      <div style={{fontSize: "small", zIndex: "-10", float: "right", clear: 'both', padding: '20px', margin: '20px', border: '2px solid gray', borderRadius: '5px'}}>
       <button onClick={newGame}>new game</button>
       <div>System: {(processing) ? 'processing' : 'ready'}</div>
       <div>Player: {player}</div>
       <div>Game: {gameState}</div>
       <div>{message}</div>
+      <div>{(inCheck['R'] == 'Yes') && "Red in check."}</div>
+      <div>{(inCheck['B'] == 'Yes') && "Blue in check."}</div>
       </div>
     </div>
   )

@@ -9,7 +9,8 @@ function Square(props) {
   return (
     <div 
       style={{
-        backgroundColor: props.backgroundColor,
+        position: "relative",
+        backgroundColor: props.backgroundColor || 'white',
         width: `${side - 22}px`,
         height: `${side - 22}px`,
         // textAlign:"center",
@@ -26,8 +27,8 @@ function Square(props) {
       }}
       onClick={props.handleClick}
     >
-      {props.text}
-      <img src={props.img} alt={props.alt} width="40px" style={{position: "relative", left: "-30px", filter: "drop-shadow(2px 2px 2px black) drop-shadow(-1px -1px 0 black)"}}/>
+      {/* {props.text} */}
+      <img src={props.img} alt={props.alt} width="40px" style={{position: "absolute", left: "-2px", filter: "drop-shadow(2px 2px 2px black) drop-shadow(-1px -1px 0 black)"}}/>
     </div>
   );
 }
