@@ -69,23 +69,23 @@ def make_move():
 
 @app.route('/')
 def index():
-    return app.send_static_file('./client/build/index.html')
+    return app.send_static_file('index.html')
 
 @app.errorhandler(404)
 def not_found(e):
     return {"message": "whoops"}
     # return app.send_static_file('./client/build/index.html')
 
-if ("FLASK_ENV" not in os.environ) or os.environ["FLASK_ENV"] == "production":
-    @app.route('/')
-    def index2():
-        return app.send_static_file('./client/build/index.html')
+# if ("FLASK_ENV" not in os.environ) or os.environ["FLASK_ENV"] == "production":
+#     @app.route('/')
+#     def index2():
+#         return app.send_static_file('./client/build/index.html')
 
-    # eprint("production mode")
-    @app.errorhandler(404)
-    def not_found(e):
-        return app.send_static_file('./client/build/index.html')
-    # set static folder
+#     # eprint("production mode")
+#     @app.errorhandler(404)
+#     def not_found(e):
+#         return app.send_static_file('./client/build/index.html')
+#     # set static folder
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
