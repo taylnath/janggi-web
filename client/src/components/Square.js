@@ -27,7 +27,7 @@ function Square(props) {
       onClick={props.handleClick}
     >
       {props.text}
-      <img src={props.img} alt={props.alt} width="40px" style={{position: "relative", left: "-30px"}}/>
+      <img src={props.img} alt={props.alt} width="40px" style={{position: "relative", left: "-30px", filter: "drop-shadow(2px 2px 2px black) drop-shadow(-1px -1px 0 black)"}}/>
     </div>
   );
 }

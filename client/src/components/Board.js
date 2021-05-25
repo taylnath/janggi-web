@@ -24,6 +24,7 @@ function Board() {
   const [player, setPlayer] = useState('B');
   const [processing, setProcessing] = useState(false);
   const [gameState, setGameState] = useState('UNFINISHED');
+  const [message, setMessage] = useState('');
 
   async function selectPiece (loc) {
     let newBoard = {...board};
@@ -40,7 +41,7 @@ function Board() {
     // only look at this location if there is a piece there
     if (!newBoard[loc].img){
       console.log('no piece here');
-      alert('no piece here');
+      setMessage('no piece here');
       setPossibleMoves([]);
       setPieceSelected(false);
       setPiecePlaced(false);
@@ -49,7 +50,7 @@ function Board() {
 
     if (newBoard[loc].player !== player){
       console.log('wrong player');
-      alert('wrong player: current player ' + player);
+      setMessage('wrong player');
       return;
     }
 
@@ -58,6 +59,8 @@ function Board() {
       newBoard[desiredLoc] = {...newBoard[desiredLoc], backgroundColor: ''};
       // newBoard[desiredLoc].backgroundColor = '';
     }
+
+    setMessage('ok');
 
     setProcessing(true);
     let res = await fetch(`/api/game/get_moves?from=${loc}`).catch(err => console.err(err));
@@ -101,13 +104,13 @@ function Board() {
     }
 
     if (!possibleMoves || !possibleMoves.length){
-      alert('no moves available');
+      setMessage('no moves available');
     };
 
     if (!(possibleMoves.includes(loc))){
       console.log(possibleMoves.includes(loc));
       console.log(typeof(loc));
-      alert('not a valid move:' + selectedLoc + ' to ' + loc + ' | possible: ' + String(possibleMoves));
+      setMessage('not a valid move');
       return;
     }
 
@@ -121,6 +124,8 @@ function Board() {
       newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
       // newBoard[moveLoc].backgroundColor = '';
     });
+
+    setMessage('ok');
 
     setProcessing(true);
     let res = await fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
@@ -186,7 +191,7 @@ function Board() {
   function handleClick (loc) {
     return function (){
       if (processing){
-        alert('system processing!');
+        setMessage('system processing!');
         return;
       }
       // if a piece has not already been selected, process the new 
@@ -240,6 +245,7 @@ function Board() {
     setSelectedLoc('');
     setDesiredLoc('');
     setPossibleMoves([]);
+    setMessage('new game');
   }
 
   return (
@@ -260,6 +266,7 @@ function Board() {
       <div>System: {(processing) ? 'processing' : 'ready'}</div>
       <div>Player: {player}</div>
       <div>Game: {gameState}</div>
+      <div>{message}</div>
       </div>
     </div>
   )
