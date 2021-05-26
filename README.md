@@ -1,3 +1,8 @@
+# Half-Stack Janggi Web App
+
+This project web app converts my Janggi game portfolio project to a web app, with no changes to the original Python Janggi game. The front end is React, and tracks its own version of game state. The back end is Flask, with the Janggi Game as a file-based session variable. When you click on spots on the board, (depending on where you click) the board 
+sends a request to the Flask server, which then responds with information about possible moves. 
+
 # portfolio-project
 
 **Remember that this project cannot be submitted late.**
