@@ -13,17 +13,19 @@ import Green_Horse from './pieces/Green_Horse.png';
 import Green_King from './pieces/Green_King.png';
 import Green_Soldier from './pieces/Green_Soldier.png';
 
+// initial values
 const numRows = 10;
 const numCols = 9;
-
 const grid = [];
 
+// set up the grid
 for (let i = 0; i < numRows; i++){
   for (let j = 0; j < numCols; j++){
     grid.push([i, j]); // describes letters[j] + String(i) position
   };
 };
 
+// set up the board object
 const boardSetup = {};
 const cols = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h', 8: 'i'}
 const rows = {0: '1', 1: '2', 2: '3', 3: '4', 4: '5', 5: '6', 6: '7', 7: '8', 8: '9', 9: '10'}
@@ -34,6 +36,8 @@ Object.keys(cols).forEach(col => {
 });
 console.log(boardSetup);
 
+// populate the board with the images
+// TODO: get this information from the server
 boardSetup.a1.img = Red_Chariot;
 boardSetup.a1.imgAlt = "Red_Chariot";
 boardSetup.a1.player = "R";
@@ -164,101 +168,9 @@ boardSetup.i7.img = Green_Soldier;
 boardSetup.i7.imgAlt = "Green_Soldier";
 boardSetup.i7.player = "B";
 
-// textKeys[0][0].img = Red_Chariot;
-// textKeys[0][0].imgAlt = "Red_Chariot";
-
-// textKeys[0][1].img = Red_Elephant;
-// textKeys[0][1].imgAlt = "Red_Elephant";
-
-// textKeys[0][2].img = Red_Horse;
-// textKeys[0][2].imgAlt = "Red_Horse";
-
-// textKeys[0][3].img = Red_Guard;
-// textKeys[0][3].imgAlt = "Red_Guard";
-
-// textKeys[0][5].img = Red_Guard;
-// textKeys[0][5].imgAlt = "Red_Guard";
-
-// textKeys[0][6].img = Red_Elephant;
-// textKeys[0][6].imgAlt = "Red_Elephant";
-
-// textKeys[0][7].img = Red_Horse;
-// textKeys[0][7].imgAlt = "Red_Horse";
-
-// textKeys[0][8].img = Red_Chariot;
-// textKeys[0][8].imgAlt = "Red_Chariot";
-
-// textKeys[1][4].img = Red_King;
-// textKeys[1][4].imgAlt = "Red_King";
-
-// textKeys[2][1].img = Red_Cannon;
-// textKeys[2][1].imgAlt = "Red_Cannon";
-
-// textKeys[2][7].img = Red_Cannon;
-// textKeys[2][7].imgAlt = "Red_Cannon";
-
-// textKeys[3][0].img = Red_Soldier;
-// textKeys[3][0].imgAlt = "Red_Soldier";
-// textKeys[3][2].img = Red_Soldier;
-// textKeys[3][2].imgAlt = "Red_Soldier";
-// textKeys[3][4].img = Red_Soldier;
-// textKeys[3][4].imgAlt = "Red_Soldier";
-// textKeys[3][6].img = Red_Soldier;
-// textKeys[3][6].imgAlt = "Red_Soldier";
-// textKeys[3][8].img = Red_Soldier;
-// textKeys[3][8].imgAlt = "Red_Soldier";
-
-// // ------- green pieces
-
-// textKeys[9][0].img = Green_Chariot;
-// textKeys[9][0].imgAlt = "Green_Chariot";
-
-// textKeys[9][1].img = Green_Elephant;
-// textKeys[9][1].imgAlt = "Green_Elephant";
-
-// textKeys[9][2].img = Green_Horse;
-// textKeys[9][2].imgAlt = "Green_Horse";
-
-// textKeys[9][3].img = Green_Guard;
-// textKeys[9][3].imgAlt = "Green_Guard";
-
-// textKeys[9][5].img = Green_Guard;
-// textKeys[9][5].imgAlt = "Green_Guard";
-
-// textKeys[9][6].img = Green_Elephant;
-// textKeys[9][6].imgAlt = "Green_Elephant";
-
-// textKeys[9][7].img = Green_Horse;
-// textKeys[9][7].imgAlt = "Green_Horse";
-
-// textKeys[9][8].img = Green_Chariot;
-// textKeys[9][8].imgAlt = "Green_Chariot";
-
-// textKeys[8][4].img = Green_King;
-// textKeys[8][4].imgAlt = "Green_King";
-
-// textKeys[7][1].img = Green_Cannon;
-// textKeys[7][1].imgAlt = "Green_Cannon";
-
-// textKeys[7][7].img = Green_Cannon;
-// textKeys[7][7].imgAlt = "Green_Cannon";
-
-// textKeys[6][0].img = Green_Soldier;
-// textKeys[6][0].imgAlt = "Green_Soldier";
-// textKeys[6][2].img = Green_Soldier;
-// textKeys[6][2].imgAlt = "Green_Soldier";
-// textKeys[6][4].img = Green_Soldier;
-// textKeys[6][4].imgAlt = "Green_Soldier";
-// textKeys[6][6].img = Green_Soldier;
-// textKeys[6][6].imgAlt = "Green_Soldier";
-// textKeys[6][8].img = Green_Soldier;
-// textKeys[6][8].imgAlt = "Green_Soldier";
-
 export {
   boardSetup,
   grid,
   numRows,
   numCols
 };
-
-// export default boardInformation;

@@ -9,11 +9,12 @@ import os
 app = Flask(__name__, static_folder="./client/build", static_url_path="/")
 
 # Configure session to use filesystem (instead of signed cookies)
-# app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_FILE_DIR"] = mkdtemp() # this messes up sessions on heroku
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# print to error, for debugging
 def eprint(*msg):
     print(*msg, file=sys.stderr)
 
@@ -27,6 +28,7 @@ def new_game():
     eprint("made new game by request")
     return {"success": True}
 
+# not used
 @app.route("/api/game/print")
 def print_board():
     if "game" not in session:
@@ -77,15 +79,18 @@ def make_move():
         "state": g.get_game_state()
         }
 
+# send root to React app
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
 
+# this could also go to the React app
 @app.errorhandler(404)
 def not_found(e):
     return {"message": "page not found"}
     # return app.send_static_file('./client/build/index.html')
 
+# # re-route to react app if not in development -- I think I had the wrong file path for the react app
 # if ("FLASK_ENV" not in os.environ) or os.environ["FLASK_ENV"] == "production":
 #     @app.route('/')
 #     def index2():

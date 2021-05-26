@@ -1,7 +1,16 @@
 # Half-Stack Janggi Web App
 
-This project web app converts my Janggi game portfolio project to a web app, with no changes to the original Python Janggi game. The front end is React, and tracks its own version of game state. The back end is Flask, with the Janggi Game as a file-based session variable. When you click on spots on the board, (depending on where you click) the board 
+This project web app converts my Janggi game portfolio project (Readme for that is below) to a web app, with no changes to the original Python Janggi game. The front end is React, and tracks its own version of game state. The back end is Flask, with the Janggi Game as a file-based session variable. When you click on spots on the board, (depending on where you click) the board 
 sends a request to the Flask server, which then responds with information about possible moves. 
+
+## Issues / TODO
+- Currently the React app doesn't check if it's state matches that of the server -- it just updates as it goes. This 
+can cause it to have a different state from the server version, for example if the page gets refreshed but the session 
+is the same. Possible fixes: make a new game on refresh, or (much better) verify with the server that board state is correct.
+- The board background is missing.
+- Not responsive on mobile. Things to fix: resize state window on small screens, get rid of "phantom" images after a piece moves out of a square. 
+- History / Back button / Saved games.
+- Checkmate hints (i.e. which move to get out of checkmate).
 
 # portfolio-project
 

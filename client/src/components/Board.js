@@ -1,33 +1,32 @@
 import {useState} from 'react';
 import Square from './Square';
 import { boardSetup, grid, numRows, numCols } from '../boardComponents/boardSetup';
-// import boardSetup from '../boardComponents/boardSetup';
 
-// let grid = [];
-// let numCols = 9;
-
+// for converting from grid notation to location string (i.e. 'a5' vs (0, 4))
 const letters = 'abcdefghi'.split('');
 function posToLoc(i, j){
   return letters[j] + String(i + 1);
 };
 
-// component to combine all the squares together
+// component to combine all the squares together and manage game state
 function Board() {
   // define state variables
-  const [board, setBoard] = useState(boardSetup);
+  const [board, setBoard] = useState(boardSetup);                 // how the board currently looks
+  const [pieceSelected, setPieceSelected] = useState(false);      // has the user selected a piece?
+  const [selectedLoc, setSelectedLoc] = useState('');             // location string of selected piece (from location)
+  const [desiredLoc, setDesiredLoc] = useState('');               // location string of desired piece (to location)
+                                                                  // (in practice, just used as last location moved to)
+                                                                  // TODO: change the name to more appropriate name
+  const [possibleMoves, setPossibleMoves] = useState([]);         // list of possible moves (including current pos)
+  const [player, setPlayer] = useState('B');                      // current player 'R' or 'B'
+  const [processing, setProcessing] = useState(false);            // true when waiting for server response
+  const [gameState, setGameState] = useState('UNFINISHED');       // game state -- "unfinished", "blue won" or "red won"
+  const [message, setMessage] = useState('');                     // helper message for details on what is going on behind the scenes
+  const [inCheck, setInCheck] = useState({'R': 'No', 'B': 'No'}); // object to track whether each player is in check or not
 
-  const [pieceSelected, setPieceSelected] = useState(false);
-  // const [piecePlaced, setPiecePlaced] = useState(false);
-  const [selectedLoc, setSelectedLoc] = useState('');
-  const [desiredLoc, setDesiredLoc] = useState('');
-  const [possibleMoves, setPossibleMoves] = useState([]);
-  const [player, setPlayer] = useState('B');
-  const [processing, setProcessing] = useState(false);
-  const [gameState, setGameState] = useState('UNFINISHED');
-  const [message, setMessage] = useState('');
-  const [inCheck, setInCheck] = useState({'R': 'No', 'B': 'No'});
-
+  // attempt to select a piece
   async function selectPiece (loc) {
+    // copy of the board to update state with
     let newBoard = {...board};
     console.log('in select piece');
 
@@ -35,7 +34,6 @@ function Board() {
     if (possibleMoves !== []){
       possibleMoves.forEach(moveLoc => {
         newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
-        // newBoard[moveLoc].backgroundColor = '';
       });
     }
 
@@ -45,10 +43,10 @@ function Board() {
       setMessage('no piece here');
       setPossibleMoves([]);
       setPieceSelected(false);
-      // setPiecePlaced(false);
       return;
     }
 
+    // only look at this location if the correct player owns the piece
     if (newBoard[loc].player !== player){
       console.log('wrong player');
       setMessage('wrong player');
@@ -58,16 +56,15 @@ function Board() {
     // if we just made a move, clear the old background
     if (desiredLoc){
       newBoard[desiredLoc] = {...newBoard[desiredLoc], backgroundColor: ''};
-      // newBoard[desiredLoc].backgroundColor = '';
     }
 
     setMessage('ok');
 
+    // get moves from server
     setProcessing(true);
     let res = await fetch(`/api/game/get_moves?from=${loc}`).catch(err => console.err(err));
     let data = await res.json();
     setProcessing(false);
-    // console.log("data from promise:", data); // debug
     let newMoves = data.moves;
 
     // set new background to denote selection
@@ -75,8 +72,10 @@ function Board() {
 
     setPieceSelected(true);
 
+    // TODO: set newMoves = [loc] if it's not defined? -- that's probably a state disconnect issue though
+
+    // set background for possible moves
     if (newMoves){
-      // set background for possible moves
       newMoves.forEach(moveLoc => {
         newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
         // newBoard[moveLoc].backgroundColor = 'green';
@@ -86,9 +85,10 @@ function Board() {
       setPossibleMoves(newMoves);
     }
 
-    // newBoard[loc].backgroundColor = 'blue';
+    // record we selected the piece
     setSelectedLoc(loc);
 
+    // give a message on what happened
     if (newMoves && (newMoves.length > 1)){
       setMessage('found moves');
     } else if (newMoves && (newMoves.length <= 1)) {
@@ -101,20 +101,26 @@ function Board() {
     setBoard(newBoard);
   }
 
+  // attempt to place a selected piece
   async function placePiece(loc) {
+    // get copy of board to update state
     let newBoard = {...board};
 
     console.log('in place piece. Possible moves:', possibleMoves);
 
     // make sure we have an initial selected piece
     if (!selectedLoc){
+      setMessage('system error -- no piece selected');
       return;
     }
 
+    // if there are no moves or they aren't defined
+    // TODO: add a return here? Or delete? Doesn't this get caught by selectPiece?
     if (!possibleMoves || !possibleMoves.length){
       setMessage('no moves available');
     };
 
+    // if the desired location is not in the possible moves, send a message and return
     if (!(possibleMoves.includes(loc))){
       console.log(possibleMoves.includes(loc));
       console.log(typeof(loc));
@@ -126,7 +132,6 @@ function Board() {
     console.log('resetting possible moves');
     possibleMoves.forEach(moveLoc => {
       newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
-      // newBoard[moveLoc].backgroundColor = '';
     });
 
     // cancel move if same piece selected
@@ -142,11 +147,13 @@ function Board() {
 
     setMessage('ok');
 
+    // ask server if move is allowed
     setProcessing(true);
     let res = await fetch(`/api/game/make_move?from=${selectedLoc}&to=${loc}`)
     let data = await res.json();
     setProcessing(false);
 
+    // return if not allowed to make the move
     setMessage('move is allowed? ' + data.success);
     if (!data.success){
       return;
@@ -159,14 +166,15 @@ function Board() {
     setInCheck(data.in_check);
 
     // place the piece
-    // setPiecePlaced(true);
     setPlayer((player === 'B') ? 'R' : 'B');
     newBoard[loc] = {...newBoard[loc], backgroundColor: 'red'};
-    // newBoard[loc].backgroundColor = 'red';
 
     let samePiece = true;
 
     // update the image if the new location is different
+    // TODO: re-structure this since now moves with the same from and to locations
+    // get ignored
+    // note samePiece is used by the setTimeout below
     if (selectedLoc && loc !== selectedLoc){
       samePiece = false;
       newBoard[loc] = {
@@ -181,17 +189,17 @@ function Board() {
         imgAlt: '',
         player: ''
       };
-      // newBoard[loc].img = newBoard[selectedLoc].img;
-      // newBoard[loc].imgAlt = newBoard[selectedLoc].imgAlt;
-      // newBoard[selectedLoc].img = '';
-      // newBoard[selectedLoc].imgAlt = '';
     };
+
     setDesiredLoc(loc); // take out?
+
+
+    // erase old highlighted squares after a pause
+    // TODO: is this currently working? 
     setTimeout(() => {
       let timedOutBoard = newBoard;
       if (!samePiece){
         timedOutBoard[selectedLoc] = {...timedOutBoard[selectedLoc], backgroundColor: ''};
-        // timedOutBoard[selectedLoc].backgroundColor = '';
       }
 
       // reset background for the old possible moves
@@ -199,16 +207,15 @@ function Board() {
       if (possibleMoves !== []){
         possibleMoves.filter(mov => mov !== loc).forEach(moveLoc => {
           newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: ''};
-          // newBoard[moveLoc].backgroundColor = '';
         });
       }
       setPieceSelected(false);
-      // setPiecePlaced(false); // take out?
       setBoard(timedOutBoard);
     }, 500);
     setBoard(newBoard);
   }
 
+  // deal with a click on one of the squares
   function handleClick (loc) {
     return function (){
       if (processing){
@@ -217,8 +224,6 @@ function Board() {
       }
       // if a piece has not already been selected, process the new 
       // selection
-      // console.log("piece selected:", pieceSelected); // debug
-      // console.log("piece placed:", piecePlaced); // debug
       if (!pieceSelected){
         selectPiece(loc);
       } else {
@@ -253,9 +258,11 @@ function Board() {
     );
   });
 
+  // TODO: move these down more (right above the return)
   let gridCols = `repeat(${numCols}, 1fr)`;
   let posString = `calc(50% - 200px)`;
 
+  // TODO: move this up more (above the square grid)
   async function newGame (){
     setProcessing(true);
     await fetch('/api/game/new').catch(err => console.error(err));
@@ -273,6 +280,7 @@ function Board() {
     setInCheck({'R': 'No', 'B': 'No'});
   }
 
+  // TODO: put the state display in another component
   return (
     <div> {/* wrapper div since JSX wants one element only */}
       {/* div just for squares */}
