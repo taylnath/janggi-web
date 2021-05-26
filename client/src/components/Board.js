@@ -73,24 +73,23 @@ function Board() {
     // set new background to denote selection
     newBoard[loc] = {...newBoard[loc], backgroundColor: 'blue'};
 
+    setPieceSelected(true);
+
+    // set background for possible moves
+    newMoves.forEach(moveLoc => {
+      newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
+      // newBoard[moveLoc].backgroundColor = 'green';
+    });
+    // add current location to possible moves
+    newMoves = [...newMoves, loc]
+    setPossibleMoves(newMoves);
+    // newBoard[loc].backgroundColor = 'blue';
+    setSelectedLoc(loc);
+
     if (newMoves && newMoves.length){
       setMessage('found moves');
-      console.log('moves found...highlighting...', newMoves);
-      console.log(newMoves.length);
-      setPieceSelected(true);
-      // set background for possible moves
-      newMoves.forEach(moveLoc => {
-        newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
-        // newBoard[moveLoc].backgroundColor = 'green';
-      });
-      // add current location to possible moves
-      newMoves = [...newMoves, loc]
-      setPossibleMoves(newMoves);
-      // newBoard[loc].backgroundColor = 'blue';
-      setSelectedLoc(loc);
     } else {
       setMessage('no moves');
-      console.log('no moves to make');
     }
 
     // update the board
