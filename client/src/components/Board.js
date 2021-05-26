@@ -75,21 +75,26 @@ function Board() {
 
     setPieceSelected(true);
 
-    // set background for possible moves
-    newMoves.forEach(moveLoc => {
-      newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
-      // newBoard[moveLoc].backgroundColor = 'green';
-    });
-    // add current location to possible moves
-    newMoves = [...newMoves, loc]
-    setPossibleMoves(newMoves);
+    if (newMoves){
+      // set background for possible moves
+      newMoves.forEach(moveLoc => {
+        newBoard[moveLoc] = {...newBoard[moveLoc], backgroundColor: 'green'};
+        // newBoard[moveLoc].backgroundColor = 'green';
+      });
+      // add current location to possible moves
+      newMoves = [...newMoves, loc]
+      setPossibleMoves(newMoves);
+    }
+
     // newBoard[loc].backgroundColor = 'blue';
     setSelectedLoc(loc);
 
-    if (newMoves && newMoves.length){
+    if (newMoves && (newMoves.length > 1)){
       setMessage('found moves');
-    } else {
+    } else if (newMoves && (newMoves.length <= 1)) {
       setMessage('no moves');
+    } else {
+      setMessage('system error -- try new game');
     }
 
     // update the board
@@ -288,8 +293,8 @@ function Board() {
       <div>Player: {player}</div>
       <div>Game: {gameState}</div>
       <div>{message}</div>
-      <div>{(inCheck['R'] == 'Yes') && "Red in check."}</div>
-      <div>{(inCheck['B'] == 'Yes') && "Blue in check."}</div>
+      <div>{(inCheck['R'] === 'Yes') && "Red in check."}</div>
+      <div>{(inCheck['B'] === 'Yes') && "Blue in check."}</div>
       </div>
     </div>
   )
