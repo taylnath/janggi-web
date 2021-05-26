@@ -233,10 +233,12 @@ function Board() {
     // console.log("loc is", loc);
     // console.log(board);
     // console.log("loc on board is", board[loc]);
+    let bgImage = `url(${board[loc].backgroundImage})`;
     return (
       <Square 
         key={loc}
         backgroundColor={board[loc].backgroundColor}
+        backgroundImage={bgImage}
         // xPos={i} 
         // yPos={j} 
         handleClick={handleClick(loc)}
@@ -287,8 +289,8 @@ function Board() {
       <div>Player: {player}</div>
       <div>Game: {gameState}</div>
       <div>{message}</div>
-      <div>{(inCheck['R'] == 'Yes') && "Red in check."}</div>
-      <div>{(inCheck['B'] == 'Yes') && "Blue in check."}</div>
+      <div>{(inCheck['R'] === 'Yes') && "Red in check."}</div>
+      <div>{(inCheck['B'] === 'Yes') && "Blue in check."}</div>
       </div>
     </div>
   )

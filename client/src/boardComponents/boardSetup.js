@@ -13,6 +13,27 @@ import Green_Horse from './pieces/Green_Horse.png';
 import Green_King from './pieces/Green_King.png';
 import Green_Soldier from './pieces/Green_Soldier.png';
 
+import mid from './boardPieces/Janggi_.svg';
+import b from './boardPieces/Janggi_b.svg';
+import bl from './boardPieces/Janggi_bl.svg';
+import br from './boardPieces/Janggi_br.svg';
+import cc from './boardPieces/Janggi_cc.svg';
+import d from './boardPieces/Janggi_d.svg';
+import dl from './boardPieces/Janggi_dl.svg';
+import dr from './boardPieces/Janggi_dr.svg';
+import l from './boardPieces/Janggi_l.svg';
+import pdl from './boardPieces/Janggi_pdl.svg';
+import pdr from './boardPieces/Janggi_pdr.svg';
+import pl from './boardPieces/Janggi_pl.svg';
+import pul from './boardPieces/Janggi_pul.svg';
+import pur from './boardPieces/Janggi_pur.svg';
+import r from './boardPieces/Janggi_r.svg';
+import tl from './boardPieces/Janggi_tl.svg';
+import tr from './boardPieces/Janggi_tr.svg';
+import u from './boardPieces/Janggi_u.svg';
+import ul from './boardPieces/Janggi_ul.svg';
+import ur from './boardPieces/Janggi_ur.svg';
+
 const numRows = 10;
 const numCols = 9;
 
@@ -33,6 +54,9 @@ Object.keys(cols).forEach(col => {
   });
 });
 console.log(boardSetup);
+
+boardSetup.a1.backgroundImage = ul;
+boardSetup.b1.backgroundImage = u;
 
 boardSetup.a1.img = Red_Chariot;
 boardSetup.a1.imgAlt = "Red_Chariot";
