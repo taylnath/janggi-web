@@ -69,9 +69,12 @@ function Board() {
     setProcessing(false);
     // console.log("data from promise:", data); // debug
     let newMoves = data.moves;
-    setMessage('found moves');
+
+    // set new background to denote selection
+    newBoard[loc] = {...newBoard[loc], backgroundColor: 'blue'};
 
     if (newMoves && newMoves.length){
+      setMessage('found moves');
       console.log('moves found...highlighting...', newMoves);
       console.log(newMoves.length);
       setPieceSelected(true);
@@ -83,11 +86,10 @@ function Board() {
       // add current location to possible moves
       newMoves = [...newMoves, loc]
       setPossibleMoves(newMoves);
-      // set new background to denote selection
-      newBoard[loc] = {...newBoard[loc], backgroundColor: 'blue'};
       // newBoard[loc].backgroundColor = 'blue';
       setSelectedLoc(loc);
     } else {
+      setMessage('no moves');
       console.log('no moves to make');
     }
 
