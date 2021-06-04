@@ -34,8 +34,14 @@ space with no piece).
 ## Issues / TODO
 - Currently the React app doesn't check if it's state matches that of the server -- it just updates as it goes. This 
 can cause it to have a different state from the server version, for example if the page gets refreshed but the session 
-is the same. Possible fixes: make a new game on refresh, or (much better) verify with the server that board state is correct.
+is the same. 
+  - Possible fixes: make a new game on refresh, or (much better) verify with the server that board state is correct.
+  - Current fix: If the front-end detects that the state doesn't match that of the server, the game prints a message requesting the user make a new game.
 - The board background is missing.
 - Not responsive on mobile. Things to fix: resize state window on small screens, get rid of "phantom" images after a piece moves out of a square. 
 - History / Back button / Saved games.
 - Checkmate hints (i.e. which move to get out of checkmate).
+- Improve speed / responsiveness of the game. Unfortunately I think 
+the best improvement here would be to completely re-write the game 
+just in JavaScript so that it could run in the browser instead of 
+using requests. 
